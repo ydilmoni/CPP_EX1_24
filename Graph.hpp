@@ -8,7 +8,7 @@
 namespace ariel {
     class Graph {
     private:
-        std::vector<std::vector<int>> matrix_graph;
+        vector<vector<int>> matrix_graph;
         int num_of_vertices;
         int num_of_edges;
         bool isDirected;
@@ -16,11 +16,11 @@ namespace ariel {
         bool haveNegative;
 
     public:
-        Graph(); // Constructor
-        ~Graph(); // Destructor
+        Graph(){}; // Constructor
+        ~Graph(){}; // Destructor
 
-        // Member functions
-        void loadGraph(const std::vector<std::vector<int>>& matrix);
+        
+        void loadGraph(const vector<vector<int>>& matrix);
         void printGraph() const;
         int getNumOfvertices() const { 
             return num_of_vertices; 
@@ -28,7 +28,7 @@ namespace ariel {
         int getNumOfEdges() const {
              return num_of_edges; 
         }
-        const std::vector<std::vector<int>>& getMatrixGraph() const { 
+        const vector<vector<int>>& getMatrixGraph() const { 
             return matrix_graph; 
         }
         bool getIsDirected() const { 
@@ -43,7 +43,7 @@ namespace ariel {
 
     
 
-        static bool validateSquareMatrix(const std::vector<std::vector<int>>& matrix); // Static member function
+        static bool validateSquareMatrix(const vector<vector<int>>& matrix);
     };
 }
 
