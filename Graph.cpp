@@ -3,14 +3,15 @@
 using namespace std;
 
 namespace ariel {
+
     Graph::Graph(){
         num_of_vertices = 0;
         num_of_edges = 0;
     }
 
     Graph::~Graph() {}
-
-    void Graph::loadGraph(const vector<vector<int>>& matrix) {
+    void Graph::loadGraph(const vector<vector<int>> &matrix)
+    {
         if (!validateSquareMatrix(matrix)){
             throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
         }

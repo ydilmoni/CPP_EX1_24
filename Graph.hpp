@@ -2,7 +2,7 @@
 #define GRAPH_HPP
 
 #include <vector> 
-
+using namespace std;
 
 
 namespace ariel {
@@ -16,8 +16,11 @@ namespace ariel {
         bool haveNegative;
 
     public:
-        Graph(){}; // Constructor
-        ~Graph(){}; // Destructor
+        Graph();  // Constructor declaration
+        ~Graph(); // Destructor declaration
+        
+       
+        
 
         
         void loadGraph(const vector<vector<int>>& matrix);

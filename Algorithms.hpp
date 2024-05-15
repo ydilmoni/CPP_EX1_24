@@ -10,9 +10,9 @@ namespace ariel {
         public:
             static bool isConnected(const Graph& g);
             static string shortestPath(const Graph& g, int start, int end);
-            static string isContainsCycle(const Graph& g);
-            static string isBipartite(const Graph& g);
-            static string negativeCycle(const Graph& g);
+            static bool isContainsCycle(const Graph& g);
+            static bool isBipartite(const Graph& g);
+            static bool negativeCycle(const Graph& g);
             static vector<int> bfs(const vector<vector<int>>& matrix, int start, int end);
             static vector<int> dijkstra (const vector<vector<int>>& matrix, int start, int end);
             static vector<int> belmanFordAlgorithm(const vector<vector<int>>& matrix, int start);

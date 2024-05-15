@@ -63,8 +63,9 @@ namespace ariel
         {
             if (matrix[start][end])//אם זה גרף ללא משקלים, ויש צלע בין הקודקודים שביקשת אז זה בהכרח הכי קצר
             {
-                return "(" + to_string(start) + ") -> (" + to_string(start) + ")";
+                return to_string(start) + "->" + to_string(start);
             }
+
             parents= bfs(matrix, start, end);
             return printPath(parents, start, end);
         }
@@ -86,7 +87,7 @@ namespace ariel
         return printPath(parents, start, end);
     }
 
-    string Algorithms::isContainsCycle(const Graph &g)//סיימתי
+    bool Algorithms::isContainsCycle(const Graph &g)//סיימתי
     {
         int vertex = g.getNumOfvertices();
         vector<vector<int>> matrix = g.getMatrixGraph();
@@ -115,17 +116,18 @@ namespace ariel
                             k=parentsJI[k];
                         }
                         result += "( "+to_string(k) +" )";
-                        return result;
+                        cout<< result<<endl;
+                        return true;
                     }
 
                 }                
             }
         }
-
-         return "No cycle found.";
+        cout<<"No cycle found."<<endl;
+        return false;
     }
 
-    string Algorithms::isBipartite(const Graph &g)//סיימתי
+    bool Algorithms::isBipartite(const Graph &g)//סיימתי
     {
         vector<vector<int>> matrix = g.getMatrixGraph();
         int numVertices = g.getNumOfvertices();
@@ -162,7 +164,8 @@ namespace ariel
                             //אם לשכן יש אותו צבע כמו לנוכחי אז הם לא ניתנים לחלוקה ל2
                             else if (colors[neighbor] == colors[current])
                             {
-                                return "The graph is not bipartite.";
+                                cout<<"The graph is not bipartite."<<endl;
+                                return false;
                             }
                         }
                     }
@@ -181,15 +184,16 @@ namespace ariel
         {
             result += to_string(vertex) + " ";
         }
-
-        return result;
+        cout<<result<<endl;
+        return true;;
     }
 
-    string Algorithms::negativeCycle(const Graph &g)
+    bool Algorithms::negativeCycle(const Graph &g)
     {
         if (!g.getHaveNegative() || !g.getIsWeighted())
         {
-            return "There is no negative values in this graph --> There is no negative cycle ";
+            cout<<"There is no negative values in this graph --> There is no negative cycle "<<endl;
+            return false;
         }
 
         
@@ -214,55 +218,19 @@ namespace ariel
         }
         
         for(size_t u = 0; u < n ; u++ ){
-                for(size_t v = 0; v < n; u++) {
-                    if(matrix[u][v]!=0 && distances[v] > distances[u] + matrix[u][v]){
-                        return printNegativePath(parents, matrix, 0);
-                    }
+            for(size_t v = 0; v < n; u++) {
+                if(matrix[u][v]!=0 && distances[v] > distances[u] + matrix[u][v]){
+
+                    result= printNegativePath(parents, matrix, 0);
+                    cout<<result<<endl;
+                    return true;
                 }
             }
-
+        }
         
+        cout<<"There is no a negative cycle"<<endl;
         
-        
-        // parents=belmanFordAlgorithm(matrix,0);
-        // if (parents[parents.size()-1] == -3){
-        //     for(int i = parents.size()-2; i>=0; i-- ){
-        //         result += " ( "+ to_string(parents[i]) + " ) -->";
-        //     }
-        //     return result;
-        // }
-        // for (size_t i=0;i<n; i++){
-        //     int u,v;
-        //     parents=belmanFordAlgorithm(matrix, i);
-        //     for (size_t j = 0; j < parents.size(); j++)
-        //     {
-        //        if (parents[j]<-1)
-        //        {
-        //         v=j;
-        //         if (parents[j]==-5)
-        //         {
-        //             u=0;
-        //         }else{
-        //             u=(parents[v]+5)/-3;//מצאתי את הקודקודים שגרמו למעגל
-        //         }
-        //         parents[v]=u;
-        //         int corrent = u;
-        //         cout<<"V is "<<v<<endl;
-        //         while (parents[corrent]!=v)
-        //         {
-        //             result = result+ " ( "+ to_string(corrent) +" ) -> ";
-        //             corrent=parents[corrent];
-        //         }
-        //         result =result + " ( "+ to_string(u) +" )";
-                
-        //         return result;
-        //        }
-        //     }
-            
-            
-        // }
-        
-        return "There is no a negative cycle";
+        return false;
     }
 
     vector<int> Algorithms::bfs(const vector<vector<int>> &matrix, int start, int end)//סיימתי
@@ -398,14 +366,14 @@ namespace ariel
         }
         
         if(parents[end] == start){
-            return "( " + to_string(start) + " ) -> ( " + to_string(end) + " ) ";
+            return to_string(start) + "->" + to_string(end);
         }
         
         string result;
         int current = end;
         while (parents[current] != start)
         {
-            result = "-> ( " + to_string(current) + " ) " + result;
+            result = "->" + to_string(current) + result;
             current = parents[current];
         }
 
