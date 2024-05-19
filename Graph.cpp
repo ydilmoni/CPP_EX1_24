@@ -15,15 +15,24 @@ namespace ariel {
         if (!validateSquareMatrix(matrix)){
             throw std::invalid_argument("Invalid graph: The graph is not a square matrix.");
         }
+
         this->matrix_graph = matrix;
         this->num_of_vertices = this->matrix_graph.size();
+        if(num_of_vertices==0){
+            throw std::invalid_argument("Invalid graph: There is no vertex.");
+        }
+        
         this->num_of_edges = 0;
         this->isDirected=false;
         this->isWeighted=false;
         this->haveNegative=false;
-        for (int i = 0 ; i<this->num_of_vertices; i++) {
-            for (int j=0; j< this->num_of_vertices; j++) {
+        for (size_t i = 0 ; i<this->num_of_vertices; i++) {
+            for (size_t j=0; j< this->num_of_vertices; j++) {
                 if (this->matrix_graph[i][j]!= 0) {
+                    if(i==j){
+                        throw std::invalid_argument("Invalid graph: There is a edge from vertex "+to_string(i)+" to himself.");
+                    }
+
                     num_of_edges++;
                     
                     if (this->matrix_graph[i][j]!=1){//אם זה לא אחד ולא 0 אז יש משקל
@@ -51,6 +60,7 @@ namespace ariel {
         cout << "The graph has " << num_of_vertices << " vertices and " << num_of_edges << " edges" << endl;
     }
 
+    
     bool Graph::validateSquareMatrix(const vector<vector<int>> &matrix)
     {
         for (size_t i=0; i<matrix.size(); i++){

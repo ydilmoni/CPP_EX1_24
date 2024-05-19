@@ -8,9 +8,9 @@ using namespace std;
 namespace ariel {
     class Graph {
     private:
-        vector<vector<int>> matrix_graph;
-        int num_of_vertices;
-        int num_of_edges;
+        vector<vector<int> > matrix_graph;
+        size_t num_of_vertices;
+        size_t num_of_edges;
         bool isDirected;
         bool isWeighted;
         bool haveNegative;
@@ -23,15 +23,15 @@ namespace ariel {
         
 
         
-        void loadGraph(const vector<vector<int>>& matrix);
+        void loadGraph(const vector<vector<int> >& matrix);
         void printGraph() const;
-        int getNumOfvertices() const { 
+        size_t getNumOfvertices() const { 
             return num_of_vertices; 
         }
-        int getNumOfEdges() const {
+        size_t getNumOfEdges() const {
              return num_of_edges; 
         }
-        const vector<vector<int>>& getMatrixGraph() const { 
+        const vector<vector<int> >& getMatrixGraph() const { 
             return matrix_graph; 
         }
         bool getIsDirected() const { 
@@ -44,9 +44,7 @@ namespace ariel {
             return haveNegative; 
         } 
 
-    
-
-        static bool validateSquareMatrix(const vector<vector<int>>& matrix);
+        static bool validateSquareMatrix(const vector<vector<int> >& matrix);
     };
 }
 

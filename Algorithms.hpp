@@ -13,11 +13,11 @@ namespace ariel {
             static bool isContainsCycle(const Graph& g);
             static bool isBipartite(const Graph& g);
             static bool negativeCycle(const Graph& g);
-            static vector<int> bfs(const vector<vector<int>>& matrix, int start, int end);
-            static vector<int> dijkstra (const vector<vector<int>>& matrix, int start, int end);
-            static vector<int> belmanFordAlgorithm(const vector<vector<int>>& matrix, int start);
+            static vector<int> bfs(const vector<vector<int> >& matrix, int start, int end);
+            static vector<int> dijkstra (const vector<vector<int> >& matrix, int start, int end);
+            static vector<int> belmanFordAlgorithm(const vector<vector<int> >& matrix, int start);
             static string printPath(vector<int>&parents, int start, int end);
-            static string printNegativePath(vector<int> &parents,const vector<vector<int>>& matrix, int start);
+            static string printNegativePath(vector<int> &parents,const vector<vector<int> >& matrix, int start);
     };
 }
 

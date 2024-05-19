@@ -19,27 +19,42 @@ namespace ariel
     bool Algorithms::isConnected(const Graph &g)//סיימתי
     {
         vector< vector<int>> matrix = g.getMatrixGraph();
-        int vertex = matrix.size();
-        vector<int> resultFromSerchAlgo(vertex);
-        
+        size_t vertex = matrix.size();
+
+        vector<bool> visited(vertex, false);
+        queue<size_t> q;
+        int count = 1;
         //אם הגרף לא מכוון אפשר פשוט לבדוק אם ניתן להגיע מקודקוד 0 לכל שאר הגרף, אחרת צריך לבדוק עבור כל קודקוד
         int iteration = g.getIsDirected()? vertex : 1;
-        for (int i=0; i<iteration; i++){
-            for (int j=0; j<vertex; j++){
-                if(i!=j){
-                    //השימוש באלגוריתם הזה לכל סוג של גרף, ללא קשר למשקלים שליליים או חיוביים הוא בגלל שאני רק מחפש דרך כלשהיא ולא מעניין אותי המרחק
-                    resultFromSerchAlgo=bfs(matrix,i,j);
-                    if(printPath(resultFromSerchAlgo,i,j) == "There is no path from vertex "+ to_string(i) +" to vertex " +to_string(j)){
-                        cout<<"The graph is not connected!!"<<endl;
-                        cout<<"For example:\
-                        \nThere is no path from vertex "+ to_string(i) +" to vertex " +to_string(j)<<endl;
-                        return false;
+        for (size_t i=0; i<iteration; i++){
+            for (size_t j=0; j<vertex; j++){
+                fill(visited.begin(), visited.end(), false);
+                q.push(i);
+                visited[i] = true;
+                count = 1;
+
+                while (!q.empty()) {
+                    size_t u = q.front();
+                    q.pop();
+
+                    for (size_t v = 0; v < vertex; v++) {
+                        if (matrix[u][v] != 0 && !visited[v]) {
+                            visited[v] = true;
+                            q.push(v);
+                            count++;
+                        }
                     }
-                }                
+                }
+
+                if (count != vertex) {
+                    cout<<"Unconnected graph!"<<endl;
+                    return false;
+                }
+                               
             }
         }
 
-        cout<<"The graph is connected!! YAY!";
+        cout<<"The graph is connected"<<endl;
         return true;
     }
 
@@ -48,34 +63,35 @@ namespace ariel
         if (start < 0 || end < 0 || start > g.getNumOfvertices() - 1 || end > g.getNumOfvertices() - 1)
         {
             // כלומר אם ביקשת את הפעולה עבור קודקודים שלא נמצאים בכלל
-            return "Out of range!\n you must ask for values between 0 and " +to_string(g.getNumOfvertices() - 1);
+            cout<< "Out of range!\n you must ask for values between 0 and " +to_string(g.getNumOfvertices() - 1)<<endl;
+            return "-1";
         }
 
         if (start == end)
         {
-            return "Start and end vertices are the same.";
+            cout<<"Start and end vertices are the same."<<endl;
+            return  "-1";
         }
 
         vector<vector<int>> matrix = g.getMatrixGraph();
         vector<int> parents;
 
-        if (!g.getIsWeighted())
+        if (!g.getIsWeighted())//אם אין משקלים
         {
-            if (matrix[start][end])//אם זה גרף ללא משקלים, ויש צלע בין הקודקודים שביקשת אז זה בהכרח הכי קצר
-            {
-                return to_string(start) + "->" + to_string(start);
-            }
-
             parents= bfs(matrix, start, end);
+            //הלולאה שפה רק למקרה שרוצים לבדוק שהאלגוריתם החזיר את רשימת ההורים שציפינו
+            // for(int i =0; i<matrix.size();i++){
+            //     cout<<"father of "<< to_string(i)<<" is "<<to_string(parents[i])<<endl;
+            // }
             return printPath(parents, start, end);
         }
 
         if (!g.getHaveNegative())//אם גרף ממושקל ללא משקלים שליליים נשתמש בדייקסטרה
         {
-            cout << "using Dijkstra's algorithm to find the shortest path from: \nvertex "
-                 << start << " to vertex "
-                 << end << endl;
+            cout << "using Dijkstra's algorithm to find the shortest path from: \n \
+            vertex "<< to_string(start) << " to vertex "<< to_string(end) << endl;
             parents = dijkstra(matrix, start, end);
+
             return printPath(parents, start, end);
         }
 
@@ -89,54 +105,90 @@ namespace ariel
 
     bool Algorithms::isContainsCycle(const Graph &g)//סיימתי
     {
-        int vertex = g.getNumOfvertices();
+        if(g.getNumOfEdges()<2){
+            cout<<"No cycle found."<<endl;//אין מעגל אם אין מספיק צלעות
+            return false;
+        }
+        size_t vertex = g.getNumOfvertices();
         vector<vector<int>> matrix = g.getMatrixGraph();
-        vector<bool> visited (vertex, false);
         string result;
         vector<int> parentsIJ(vertex,-1);
-        vector<int> parentsJI(vertex, -1);
+        int ij;
 
-
-        for (int i=0; i<vertex; i++){
-            for (int j=0; j<vertex; j++){
+        for (size_t i=0; i<vertex; i++){
+            for (size_t j=0; j<vertex; j++){
                 if(i!=j){
-                    parentsIJ = bfs(matrix,i,j);
-                    parentsJI = bfs(matrix,j,i);
-                    if (parentsIJ[j]!=-1 && parentsJI[i]!=-1){
-                        result = "There is a cycle in the graph: \n";
-                        int k=j;
-                        while (parentsIJ[k] != -1){
-                            result += "( "+to_string(k) +" ) <- ";
-                            k=parentsIJ[k];
-                        }
-                        k=i;
-                        while ((parentsJI[k] != -1))
-                        {
-                            result += "( "+to_string(k) +" ) <- ";
-                            k=parentsJI[k];
-                        }
-                        result += "( "+to_string(k) +" )";
-                        cout<< result<<endl;
-                        return true;
+                    ij = matrix[i][j];
+                    if (!g.getIsDirected()){
+                        matrix[i][j] = 0;
                     }
+
+                    parentsIJ = bfs(matrix,i,j); //בודק אם יש מסלול בשני הכיוונים- אם יש אז יש מעגל
+
+                    matrix[i][j] = ij;
+
+                    if(parentsIJ[j]!=-1){//קיים מסלול מההתחלה לסוף
+                        {
+                            if (!g.getIsDirected() && matrix[j][i]!=0){//אם הוא לא מכוון וגם יש צלע מב' לא' אז יש מעגל
+                                vector<int> cycleVec;
+                                int k=j;
+                                while (k >= 0){
+                                    cycleVec.push_back(k);
+                                    k=parentsIJ[k];
+                                }
+                                cycleVec.push_back(j);
+                                size_t vecSize = cycleVec.size();
+
+                                cout<<"There is a cycle in the graph: \n"<<endl;
+                                for(size_t t=0; t< vecSize-1; t++){
+                                    result = result+to_string(cycleVec[t])+"->";
+                                }
+                                result = result+to_string(cycleVec[vecSize-1]);
+                                cout<< result<<endl;
+                                return true;
+
+                            }
+                            else if (g.getIsDirected() && matrix[j][i]!=0)//'או אם הוא לא מכוון ויש צלע בין ב' לא
+                            {
+                                vector<int> cycleVec;
+                                int k=j;
+                                while (k != -1){
+                                    cycleVec.push_back(k);
+                                    k=parentsIJ[k];
+                                }
+                                cycleVec.push_back(j);
+                                size_t vecSize = cycleVec.size();
+
+                                cout<<"There is a cycle in the graph: \n"<<endl;
+                                for(size_t t=0; t< vecSize-1; t++){
+                                    result = result+to_string(cycleVec[t])+"->";
+                                }
+                                result = result+to_string(cycleVec[vecSize-1]);
+                                cout<< result<<endl;
+                                return true;
+                            }
+                            
+                        }
+                    }
+                    
 
                 }                
             }
         }
-        cout<<"No cycle found."<<endl;
+        cout<<"No cycle found."<<endl;//לא מצאנו מעגל אמיתי עד עכשיו לכן אין מעגל
         return false;
     }
 
     bool Algorithms::isBipartite(const Graph &g)//סיימתי
     {
         vector<vector<int>> matrix = g.getMatrixGraph();
-        int numVertices = g.getNumOfvertices();
+        size_t numVertices = g.getNumOfvertices();
 
         vector<int> colors(numVertices, -1); // מעקב אחרי צבעים
         vector<vector<int>> groups(2);//קבוצות החלוקה       
         queue<int> q;                        
 
-        for (int i = 0; i < numVertices; i++)//מעבר על כל הקודקודים
+        for (size_t i = 0; i < numVertices; i++)//מעבר על כל הקודקודים
         {
             if (colors[i] == -1)//אם אתה עדיין לא צבוע
             {
@@ -150,7 +202,7 @@ namespace ariel
                     q.pop();
 
                     
-                    for (int neighbor = 0; neighbor < matrix[current].size(); neighbor++)//מעבר על כל השכנים
+                    for (size_t neighbor = 0; neighbor < matrix[current].size(); neighbor++)//מעבר על כל השכנים
                     {
                         if (matrix[current][neighbor])//אם קיימת צלע ביניהם
                         {
@@ -190,16 +242,17 @@ namespace ariel
 
     bool Algorithms::negativeCycle(const Graph &g)
     {
-        if (!g.getHaveNegative() || !g.getIsWeighted())
+        if (!g.getHaveNegative() || !g.getIsWeighted() || g.getNumOfEdges()<2 || g.getNumOfvertices()<2)
         {
-            cout<<"There is no negative values in this graph --> There is no negative cycle "<<endl;
+            cout<<"There is no negative values in this graph --> There is no negative cycle\
+            \n Or there is no enough edges or vertices --> There is no negative cycle "<<endl;
             return false;
         }
 
         
         vector<vector<int>> matrix = g.getMatrixGraph();
-        int n = g.getNumOfvertices();
-        vector<int> distances(n,INT_MAX);
+        size_t n = g.getNumOfvertices();
+        vector<int> distances (n,INT_MAX);
         vector<int> parents(n,-1);
         distances[0]=0;
         
@@ -209,7 +262,7 @@ namespace ariel
         {
             for(size_t u = 0; u < n ; u++ ){
                 for(size_t v = 0; v < n; v++) {
-                    if(matrix[u][v]!=0 && distances[v] > distances[u] + matrix[u][v]){
+                    if(u!=v && matrix[u][v]!=0 && distances[u]!=INT_MAX && distances[v] > distances[u] + matrix[u][v] ){
                         distances[v] = distances[u] + matrix[u][v];
                         parents[v] = u;
                     }
@@ -218,17 +271,29 @@ namespace ariel
         }
         
         for(size_t u = 0; u < n ; u++ ){
-            for(size_t v = 0; v < n; u++) {
-                if(matrix[u][v]!=0 && distances[v] > distances[u] + matrix[u][v]){
+            for(size_t v = 0; v < n; v++) {
+                if(matrix[u][v]!=0 &&distances[u]!=INT_MAX&& (distances[v] > distances[u] + matrix[u][v])){
 
+                    
+                    if (!g.getIsDirected()){
+                        for(size_t i=0; i<parents.size(); i++){
+                            if(parents[i]>=0 && parents[parents[i]]==i){
+                                cout<<"There is no negative cycle"<<endl;
+                                return false;
+                            }
+                        }
+                        
+                    }
                     result= printNegativePath(parents, matrix, 0);
                     cout<<result<<endl;
                     return true;
+                    
+
                 }
             }
         }
         
-        cout<<"There is no a negative cycle"<<endl;
+        cout<<"There is no negative cycle"<<endl;
         
         return false;
     }
@@ -236,7 +301,7 @@ namespace ariel
     vector<int> Algorithms::bfs(const vector<vector<int>> &matrix, int start, int end)//סיימתי
     {
         queue<int> Q; // ככה קראו לתור באלגו 1. זרמתי
-        int vertex = matrix.size();
+        size_t vertex = matrix.size();
         vector<string> colors(vertex, "white");
         vector<int> distans(vertex, INT_MAX);
         vector<int> parents(vertex, -1); // יסמן אין הורים כרגע, אולי יהיו הורים אחר כך
@@ -248,7 +313,7 @@ namespace ariel
         {
             int u = Q.front();
             Q.pop();
-            for (int v = 0; v < vertex; v++)
+            for (size_t v = 0; v < vertex; v++)
             {
                 if (matrix[u][v] != 0 && v != u)
                 {
@@ -272,7 +337,7 @@ namespace ariel
         vector<int> distances(matrix.size(), INT_MAX);
         vector<int> parents(matrix.size(), -1);
 
-        auto compare = [&distances](int a, int b) {
+        auto compare = [&distances](size_t a, size_t b) {
             return distances[a] > distances[b];
         };
 
@@ -285,7 +350,7 @@ namespace ariel
         {
             int u = pq.top();
             pq.pop();
-            for (int v = 0; v < matrix.size(); v++)
+            for (size_t v = 0; v < matrix.size(); v++)
             {
                 if (matrix[u][v] != 0 && distances[v] > distances[u] + matrix[u][v])
                 {
@@ -302,56 +367,32 @@ namespace ariel
 
     vector<int> Algorithms::belmanFordAlgorithm(const vector<vector<int>>& matrix, int start)//סיימתי
     {
-        
-
-        int n = matrix.size();
-
+        size_t n = matrix.size();
         vector<int> distances(n, INT_MAX);
         vector<int> parents(n,-1);
         distances[start] = 0;
-        for (int i = 0; i < n-1; i++)
+        for (size_t i = 0; i < n-1; i++)
         {
-            for (int u = 0; u < n; u++)
+            for (size_t u = 0; u < n; u++)
             {
-                for (int v = 0; v < n; v++)//עבור כל צלע
+                for (size_t v = 0; v < n; v++)//עבור כל צלע
                 {
                     if (u!=v && matrix[u][v]!=0 && distances[u]!=INT_MAX && distances[v] > distances[u] + matrix[u][v] ){
                         distances[v] = distances[u] + matrix[u][v];
                         parents[v] = u;
-                        
                     }
                 }
             }
         }
         
-        for (int u = 0; u < n; u++)
+        for (size_t u = 0; u < n; u++)
         {
-            for (int v = 0; v < n; v++)
+            for (size_t v = 0; v < n; v++)
             {
                 if (matrix[u][v]!=0 &&distances[u]!=INT_MAX&& (distances[v] > distances[u] + matrix[u][v]) )
                 {   
-                    cout<<"u "<<u<<" and distance is "<< distances[u]<<" and dad is "<< parents[u]<<endl;
-                    cout<<"v "<<v<<" and distance is "<< distances[v]<<" and dad is "<< parents[v]<<endl;
-                    // cout<<"u "<<u<<" and distance is "<< distances[u]<<endl;
-                    // cout<<"u "<<u<<" and distance is "<< distances[u]<<endl;
-                    
-                    vector <int> cycle;
-                    int current = v;
-
-                    // while (parents[current]!=-1 && parents[current] !=start)
-                    // {
-                    //     cout<<"current is "<<current<<" and parent is "<< parents[current]<<endl;
-                    //     cycle.push_back(current);
-                    //     current = parents[current];
-                    // }
-                    // if ( parents[current]==start)
-                    // {
-                    //     cycle.push_back(current);
-                    //     cycle.push_back(start);
-                    //     cycle.push_back(-3);//כדי לזהות שמדובר במערך הורים של מעגל שלילי
-                    // }
-                    
-                    return cycle;
+                    parents.push_back(-3);
+                    return parents;
                 }
             }
         }
@@ -362,7 +403,8 @@ namespace ariel
     {
         
         if (parents[parents.size()-1]==-3){
-            return "Error: there is a negative cycle.";//קיבלתי את הסימון של בלמן פורד לכך שיש מעגל שלילי
+            cout<< "Error: there is a negative cycle."<<endl;//קיבלתי את הסימון של בלמן פורד לכך שיש מעגל שלילי
+            return "-1";
         }
         
         if(parents[end] == start){
@@ -370,17 +412,18 @@ namespace ariel
         }
         
         string result;
-        int current = end;
-        while (parents[current] != start)
+        size_t current = end;
+        while (parents[current]!= -1)
         {
             result = "->" + to_string(current) + result;
             current = parents[current];
         }
 
-        if (result == ""){
-            return "There is no path from vertex "+ to_string(start) +" to vertex " +to_string(end);
+        if (result == "" || current != start){
+            cout<<"There is no path from vertex "+ to_string(start) +" to vertex " +to_string(end)<<endl;
+            return "-1";
         }
-        result = "( " + to_string(current) + " ) " + result;
+        result =to_string(start)+ result;
         
         return result;
     }
@@ -388,9 +431,9 @@ namespace ariel
     string Algorithms::printNegativePath(vector<int> &parents,const vector<vector<int>>& matrix, int start)
     {
         string result;
-        int n = parents.size();
+        size_t n = parents.size();
         vector<bool> visited(n,false);
-        int u = start;
+        size_t u = start;
 
         while (!visited[u])
         {
@@ -398,7 +441,7 @@ namespace ariel
             u = parents[u];
         }
 
-        int v = parents[u];
+        size_t v = parents[u];
         cout << "Negative cycle found: "<<endl;
         result += "{{ "+ to_string(u)+" }} ";
         
@@ -410,7 +453,7 @@ namespace ariel
         }
         // result += "--( W: "+to_string(matrix[v][parents[v]])+ " )-->> {{ "+ to_string(u)+" }} ";//אם רוצים עם משלקים
         result += "---->> {{ "+ to_string(u)+" }} ";
-                        
+
         return result;
     }
 }

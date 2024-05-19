@@ -1,1 +1,0 @@
-//TODO: chack for matrix that represent a good example to chack the code
