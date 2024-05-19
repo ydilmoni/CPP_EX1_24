@@ -1,4 +1,6 @@
-
+//Mail : yonidil1997@gmail.com
+//ID : 316529445
+// #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 #include "Algorithms.hpp"
 #include "Graph.hpp"
@@ -291,6 +293,15 @@ TEST_CASE("Test isBipartite") {
     };
     g.loadGraph(graph5);
     CHECK(ariel::Algorithms::isBipartite(g) == false);
+
+    vector<vector<int>> graph6 = {
+        {0, 1, 0, 0},
+        {0, 0, 0, 0},
+        {0, 0, 0, 1},
+        {0, 0, 0, 0}
+    };
+    g.loadGraph(graph6);
+    CHECK(ariel::Algorithms::isBipartite(g) == true);
 
 }
 

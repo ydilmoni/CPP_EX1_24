@@ -1,3 +1,6 @@
+//Mail : yonidil1997@gmail.com
+//ID : 316529445
+
 #include "Algorithms.hpp"
 #include <vector>
 #include <queue>
@@ -16,7 +19,7 @@ namespace ariel
 {
 
 
-    bool Algorithms::isConnected(const Graph &g)//סיימתי
+    bool Algorithms::isConnected(const Graph &g)
     {
         vector< vector<int>> matrix = g.getMatrixGraph();
         size_t vertex = matrix.size();
@@ -58,7 +61,7 @@ namespace ariel
         return true;
     }
 
-    string Algorithms::shortestPath(const Graph &g, int start, int end) // סיימתי
+    string Algorithms::shortestPath(const Graph &g, int start, int end) 
     {
         if (start < 0 || end < 0 || start > g.getNumOfvertices() - 1 || end > g.getNumOfvertices() - 1)
         {
@@ -103,7 +106,7 @@ namespace ariel
         return printPath(parents, start, end);
     }
 
-    bool Algorithms::isContainsCycle(const Graph &g)//סיימתי
+    bool Algorithms::isContainsCycle(const Graph &g)
     {
         if(g.getNumOfEdges()<2){
             cout<<"No cycle found."<<endl;//אין מעגל אם אין מספיק צלעות
@@ -179,7 +182,7 @@ namespace ariel
         return false;
     }
 
-    bool Algorithms::isBipartite(const Graph &g)//סיימתי
+    bool Algorithms::isBipartite(const Graph &g)
     {
         vector<vector<int>> matrix = g.getMatrixGraph();
         size_t numVertices = g.getNumOfvertices();
